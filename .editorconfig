@@ -1,0 +1,5 @@
+root = true
+
+[*.cs]
+# Prefer file-scoped namespace declarations for this project
+csharp_style_namespace_declarations = file_scoped:suggestion
