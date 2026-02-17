@@ -1,0 +1,24 @@
+﻿@*
+    Notification partial: displays TempData messages using Toastr.
+*@
+
+<script>
+    $(function () {
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "5000"
+        };
+
+        @* Use JSON serialization to safely emit the TempData strings into JS *@
+        @if (TempData["success"] != null)
+        {
+            <text>toastr.success(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["success"])));</text>
+        }
+        @if (TempData["error"] != null)
+        {
+            <text>toastr.error(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["error"])));</text>
+        }
+    });
+</script>

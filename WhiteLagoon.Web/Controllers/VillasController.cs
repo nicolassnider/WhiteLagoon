@@ -41,7 +41,12 @@ public class VillasController : Controller
         {
             _dbContext.Villas.Add(villa);
             _dbContext.SaveChanges();
+            TempData["success"] = "Villa created successfully.";
             return RedirectToAction("Index", "Villas");
+        }
+        else
+        {
+            TempData["error"] = "Villa not created successfully.";
         }
 
         return View(villa); // we must return villlas to the view, otherwise we will get an error because the view is expecting a model of type Villa
@@ -71,13 +76,16 @@ public class VillasController : Controller
         if (villa.Name == villa.Description)
         {
             ModelState.AddModelError("", "The DisplayOrder cannot exactly match the Name.");
+
         }
         if (ModelState.IsValid)
         {
             _dbContext.Villas.Update(villa);
             _dbContext.SaveChanges();
+            TempData["success"] = "Villa updated successfully.";
             return RedirectToAction("Index", "Villas");
         }
+        else { TempData["error"] = "Villa not updated successfully."; }
 
         return View(villa); // we must return villlas to the view, otherwise we will get an error because the view is expecting a model of type Villa
 
@@ -103,8 +111,10 @@ public class VillasController : Controller
         {
             _dbContext.Villas.Remove(dbVilla);
             _dbContext.SaveChanges();
+            TempData["success"] = "Villa deleted successfully.";
             return RedirectToAction("Index", "Villas");
         }
+        else { TempData["error"] = "Villa not deleted successfully."; }
 
         return View(dbVilla);
 
