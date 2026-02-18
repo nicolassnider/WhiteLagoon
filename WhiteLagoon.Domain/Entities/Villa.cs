@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WhiteLagoon.Domain.Entities
 {
@@ -14,6 +16,8 @@ namespace WhiteLagoon.Domain.Entities
         public int Sqft { get; set; }
         [Range(1, 20, ErrorMessage = "Occupancy must be between 1 and 20")]
         public int Occupancy { get; set; }
+        [NotMapped]
+        public IFormFile? Image { get; set; }
         public string? ImageUrl { get; set; }
         public DateTime? CreatedDate { get; set; } = DateTime.Now;
         public DateTime? UpdatedDate { get; set; }

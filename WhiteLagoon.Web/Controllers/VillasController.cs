@@ -7,9 +7,12 @@ namespace WhiteLagoon.Web.Controllers;
 public class VillasController : Controller
 {
     private readonly IUnitOfWork _unitOfWork;
-    public VillasController(IUnitOfWork unitOfWork)
+    private readonly IWebHostEnvironment _webHostEnvironment;
+
+    public VillasController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
     {
         _unitOfWork = unitOfWork;
+        _webHostEnvironment = webHostEnvironment;
     }
     public IActionResult Index() // GET: Villas, url: /Villas
     {
@@ -33,6 +36,21 @@ public class VillasController : Controller
         }
         if (ModelState.IsValid)
         {
+            if (villa.Image != null)
+            {
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(villa.Image.FileName);
+                string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, @"images/VillaImages");
+
+                using (var fileStream = new FileStream(Path.Combine(imagePath, fileName), FileMode.Create))
+                    villa.Image.CopyTo(fileStream);
+
+                villa.ImageUrl = @"\images\VillaImages\" + fileName;
+
+            }
+            else
+            {
+                villa.ImageUrl = "https:\\placehold.co/600x400";
+            }
             _unitOfWork.VillaRepository.Add(villa);
             _unitOfWork.Save();
             TempData["success"] = "Villa created successfully.";
@@ -64,6 +82,30 @@ public class VillasController : Controller
         }
         if (ModelState.IsValid)
         {
+            if (villa.Image != null)
+            {
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(villa.Image.FileName);
+                string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, @"images/VillaImages");
+
+                if (!string.IsNullOrEmpty(villa.ImageUrl))
+                {
+                    var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, villa.ImageUrl.TrimStart('\\'));
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+
+                using (var fileStream = new FileStream(Path.Combine(imagePath, fileName), FileMode.Create))
+                    villa.Image.CopyTo(fileStream);
+
+                villa.ImageUrl = @"\images\VillaImages\" + fileName;
+
+            }
+            else
+            {
+                villa.ImageUrl = "https:\\placehold.co/600x400";
+            }
             _unitOfWork.VillaRepository.Update(villa);
             _unitOfWork.Save();
             TempData["success"] = "Villa updated successfully.";
@@ -93,6 +135,16 @@ public class VillasController : Controller
         Villa? dbVilla = _unitOfWork.VillaRepository.Get(v => v.Id == villa.Id);
         if (dbVilla != null)
         {
+
+            if (!string.IsNullOrEmpty(villa.ImageUrl))
+            {
+                var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath, villa.ImageUrl.TrimStart('\\'));
+                if (System.IO.File.Exists(oldImagePath))
+                {
+                    System.IO.File.Delete(oldImagePath);
+                }
+            }
+
             _unitOfWork.VillaRepository.Remove(dbVilla);
             _unitOfWork.Save();
             TempData["success"] = "Villa deleted successfully.";
