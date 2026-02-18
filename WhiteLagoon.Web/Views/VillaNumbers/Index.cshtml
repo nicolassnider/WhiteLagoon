@@ -1,0 +1,80 @@
+﻿@using WhiteLagoon.Domain.Entities
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+    we will use this view to show the list of villa numbers
+
+*@
+
+@model IEnumerable<VillaNumber>;
+
+@{
+    ViewData["Title"] = "Villa Numbers";
+}
+<div class="w-100 card border-0 p-4">
+    <div class="card-header bg-success bg-gradient m-lg-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Villa Number List</h2>
+            </div>
+            
+        </div>
+    </div>
+    <div class="card-body border p-4">
+        <div class="row pb-3">
+            <div class="col-6 offset-6 text-end">
+                <a asp-controller="VillaNumbers" asp-action="Create" class="btn btn-secondary">
+                    <i class="bg-info bi-plus-circle"></i>Create New Villa Number
+                </a>
+            </div>
+        </div>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        Villa Name
+                    </th>
+                    <th>
+                        Villa Number
+                    </th>
+                    <th>
+                        Special Details
+                    </th>
+                    <th>
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var villaNumber in Model)
+                {
+                    <tr>
+                        <td>
+                            @villaNumber.Villa?.Name
+                        </td>
+                        <td>
+                            @villaNumber.Villa_Number
+                        </td>
+                        <td>
+                            @villaNumber.SpecialDetails
+                        </td>
+                        <td>
+                            <a asp-controller="VillaNumbers" asp-action="Update" asp-route-villaNumberId="@villaNumber.Villa_Number" class="btn btn-success mx-2">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a asp-controller="VillaNumbers" asp-action="Delete" asp-route-villaNumberId="@villaNumber.Villa_Number" class="btn btn-danger mx-2">
+                                <i class="bi bi-trash-fill"></i>
+                            </a>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+    
+        </table>
+    </div>
+</div>
+
+
+
+
+

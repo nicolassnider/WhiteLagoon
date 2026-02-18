@@ -42,7 +42,7 @@ public class VillasController : Controller
             _dbContext.Villas.Add(villa);
             _dbContext.SaveChanges();
             TempData["success"] = "Villa created successfully.";
-            return RedirectToAction("Index", "Villas");
+            return RedirectToAction(nameof(Index), "Villas");
         }
         else
         {
@@ -83,7 +83,7 @@ public class VillasController : Controller
             _dbContext.Villas.Update(villa);
             _dbContext.SaveChanges();
             TempData["success"] = "Villa updated successfully.";
-            return RedirectToAction("Index", "Villas");
+            return RedirectToAction(nameof(Index), "Villas");
         }
         else { TempData["error"] = "Villa not updated successfully."; }
 
@@ -112,7 +112,7 @@ public class VillasController : Controller
             _dbContext.Villas.Remove(dbVilla);
             _dbContext.SaveChanges();
             TempData["success"] = "Villa deleted successfully.";
-            return RedirectToAction("Index", "Villas");
+            return RedirectToAction(nameof(Index), "Villas");
         }
         else { TempData["error"] = "Villa not deleted successfully."; }
 
