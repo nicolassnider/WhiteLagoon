@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WhiteLagoon.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using WhiteLagoon.Infrastructure.Data;
 namespace WhiteLagoon.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260218231516_add-amenities")]
+    partial class addamenities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,99 +24,6 @@ namespace WhiteLagoon.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("WhiteLagoon.Domain.Entities.Amenity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VillaId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VillaId");
-
-                    b.ToTable("Amenities");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Private Pool",
-                            VillaId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Microwave",
-                            VillaId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Private Balcony",
-                            VillaId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "1 king bed and 1 sofa bed",
-                            VillaId = 1
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Private Plunge Pool",
-                            VillaId = 2
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "Microwave and Mini Refrigerator",
-                            VillaId = 2
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "Private Balcony",
-                            VillaId = 2
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Name = "king bed or 2 double beds",
-                            VillaId = 2
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Name = "Private Pool",
-                            VillaId = 3
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Name = "Jacuzzi",
-                            VillaId = 3
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Name = "Private Balcony",
-                            VillaId = 3
-                        });
-                });
 
             modelBuilder.Entity("WhiteLagoon.Domain.Entities.Villa", b =>
                 {
@@ -157,7 +67,7 @@ namespace WhiteLagoon.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2026, 2, 18, 17, 20, 48, 339, DateTimeKind.Local).AddTicks(2956),
+                            CreatedDate = new DateTime(2026, 2, 18, 17, 15, 15, 739, DateTimeKind.Local).AddTicks(3963),
                             Description = "Fusce 11 tincidunt maximus leo, sed scelerisque massa auctor sit amet. Donec ex mauris, hendrerit quis nibh ac, efficitur fringilla enim.",
                             ImageUrl = "https://placehold.co/600x400",
                             Name = "Royal Villa",
@@ -168,7 +78,7 @@ namespace WhiteLagoon.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2026, 2, 18, 17, 20, 48, 339, DateTimeKind.Local).AddTicks(2976),
+                            CreatedDate = new DateTime(2026, 2, 18, 17, 15, 15, 739, DateTimeKind.Local).AddTicks(3982),
                             Description = "Fusce 11 tincidunt maximus leo, sed scelerisque massa auctor sit amet. Donec ex mauris, hendrerit quis nibh ac, efficitur fringilla enim.",
                             ImageUrl = "https://placehold.co/600x401",
                             Name = "Premium Pool Villa",
@@ -179,7 +89,7 @@ namespace WhiteLagoon.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2026, 2, 18, 17, 20, 48, 339, DateTimeKind.Local).AddTicks(2978),
+                            CreatedDate = new DateTime(2026, 2, 18, 17, 15, 15, 739, DateTimeKind.Local).AddTicks(3984),
                             Description = "Fusce 11 tincidunt maximus leo, sed scelerisque massa auctor sit amet. Donec ex mauris, hendrerit quis nibh ac, efficitur fringilla enim.",
                             ImageUrl = "https://placehold.co/600x402",
                             Name = "Luxury Pool Villa",
@@ -247,17 +157,6 @@ namespace WhiteLagoon.Infrastructure.Migrations
                             Villa_Number = 302,
                             VillaId = 3
                         });
-                });
-
-            modelBuilder.Entity("WhiteLagoon.Domain.Entities.Amenity", b =>
-                {
-                    b.HasOne("WhiteLagoon.Domain.Entities.Villa", "Villa")
-                        .WithMany()
-                        .HasForeignKey("VillaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Villa");
                 });
 
             modelBuilder.Entity("WhiteLagoon.Domain.Entities.VillaNumber", b =>
