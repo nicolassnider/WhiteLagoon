@@ -23,12 +23,35 @@ namespace WhiteLagoon.Web.Controllers
                 Nights = 1,
                 CheckInDate = DateOnly.FromDateTime(DateTime.Now)
             };
-
-
-
             return View(homeVM);
         }
 
+        [HttpPost]
+        public IActionResult Index(HomeVM homeVM)
+        {
+            homeVM.Villas = _unitOfWork.VillaRepository.GetAll(includeProperties: "VillaAmenity").ToList();
+            return View(homeVM);
+        }
+
+        public IActionResult GetVillasByDate(int nights, DateOnly checkInDate)
+        {
+            var villasList = _unitOfWork.VillaRepository.GetAll(includeProperties: "VillaAmenity").ToList();
+            foreach (var villa in villasList)
+            {
+                if (villa.Id % 2 == 0)
+                {
+                    villa.IsAvailable = false;
+                }
+            }
+
+            HomeVM homeVM = new HomeVM()
+            {
+                CheckInDate = checkInDate,
+                Villas = villasList,
+                Nights = nights
+            };
+            return View(homeVM);
+        }
         public IActionResult Privacy()
         {
             return View();
