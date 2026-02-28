@@ -16,6 +16,7 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         public IActionResult Index()
+
         {
             HomeVM homeVM = new HomeVM()
             {
@@ -27,12 +28,6 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Index(HomeVM homeVM)
-        {
-            homeVM.Villas = _unitOfWork.VillaRepository.GetAll(includeProperties: "VillaAmenity").ToList();
-            return View(homeVM);
-        }
-
         public IActionResult GetVillasByDate(int nights, DateOnly checkInDate)
         {
             var villasList = _unitOfWork.VillaRepository.GetAll(includeProperties: "VillaAmenity").ToList();
@@ -50,7 +45,7 @@ namespace WhiteLagoon.Web.Controllers
                 Villas = villasList,
                 Nights = nights
             };
-            return View(homeVM);
+            return PartialView("_VillaListPartial", homeVM);
         }
         public IActionResult Privacy()
         {
