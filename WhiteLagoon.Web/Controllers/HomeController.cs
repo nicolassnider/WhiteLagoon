@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using WhiteLagoon.Application.Common.Interfaces;
+using WhiteLagoon.Application.Common.Utility;
 using WhiteLagoon.Web.ViewModels;
 
 namespace WhiteLagoon.Web.Controllers
@@ -31,12 +32,13 @@ namespace WhiteLagoon.Web.Controllers
         public IActionResult GetVillasByDate(int nights, DateOnly checkInDate)
         {
             var villasList = _unitOfWork.VillaRepository.GetAll(includeProperties: "VillaAmenity").ToList();
+            var villaNumberList = _unitOfWork.VillaNumberRepository.GetAll().ToList();
+            var bookedVillas = _unitOfWork.BookingRepository.GetAll(u => u.Status == SD.Status_Approved ||
+            u.Status == SD.Status_CheckedIn).ToList();
             foreach (var villa in villasList)
             {
-                if (villa.Id % 2 == 0)
-                {
-                    villa.IsAvailable = false;
-                }
+                int roomAvailable = SD.VillaRoomsAvailable_Count(villa.Id, villaNumberList, checkInDate, nights, bookedVillas);
+                villa.IsAvailable = roomAvailable > 0 ? true : false;
             }
 
             HomeVM homeVM = new HomeVM()
