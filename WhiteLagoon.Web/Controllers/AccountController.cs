@@ -6,155 +6,147 @@ using WhiteLagoon.Application.Common.Utility;
 using WhiteLagoon.Domain.Entities;
 using WhiteLagoon.Web.ViewModels;
 
-namespace WhiteLagoon.Web.Controllers
+namespace WhiteLagoon.Web.Controllers;
+
+public class AccountController(
+    IUnitOfWork unitOfWork,
+    UserManager<ApplicationUser> userManager,
+    SignInManager<ApplicationUser> signInManager,
+    RoleManager<IdentityRole> roleManager) : Controller
 {
-    public class AccountController : Controller
+
+    public IActionResult Login(string returnUrl = null)
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountController(IUnitOfWork unitOfWork,
-            UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager,
-            SignInManager<ApplicationUser> signInManager)
+        returnUrl ??= Url.Content("~/");
+
+        LoginVM loginVM = new()
         {
-            _roleManager = roleManager;
-            _unitOfWork = unitOfWork;
-            _userManager = userManager;
-            _signInManager = signInManager;
-        }
+            RedirectUrl = returnUrl
+        };
 
-        public IActionResult Login(string returnUrl = null)
+        return View(loginVM);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Login(LoginVM loginVM)
+    {
+        if (ModelState.IsValid)
         {
+            var result = await signInManager
+                .PasswordSignInAsync(loginVM.Email, loginVM.Password, loginVM.RememberMe, lockoutOnFailure: false);
 
-            returnUrl ??= Url.Content("~/");
-
-            LoginVM loginVM = new()
-            {
-                RedirectUrl = returnUrl
-            };
-
-            return View(loginVM);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginVM loginVM)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await _signInManager
-                    .PasswordSignInAsync(loginVM.Email, loginVM.Password, loginVM.RememberMe, lockoutOnFailure: false);
-
-
-                if (result.Succeeded)
-                {
-
-
-                    if (string.IsNullOrEmpty(loginVM.RedirectUrl))
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
-                    else
-                    {
-                        return LocalRedirect(loginVM.RedirectUrl);
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                }
-            }
-
-            return View(loginVM);
-        }
-
-        public IActionResult Register(string returnUrl = null)
-        {
-            returnUrl ??= Url.Content("~/");
-            if (!_roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult())
-            {
-                _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).Wait();
-                _roleManager.CreateAsync(new IdentityRole(SD.Role_Customer)).Wait();
-            }
-
-            RegisterVM registerVM = new()
-            {
-                RoleList = _roleManager.Roles.Select(x => new SelectListItem
-                {
-                    Text = x.Name,
-                    Value = x.Name
-                }),
-                RedirectUrl = returnUrl
-            };
-
-            return View(registerVM);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Register(RegisterVM registerVM)
-        {
-            ApplicationUser user = new()
-            {
-                Name = registerVM.Name,
-                Email = registerVM.Email,
-                PhoneNumber = registerVM.PhoneNumber,
-                NormalizedEmail = registerVM.Email.ToUpper(),
-                EmailConfirmed = true,
-                UserName = registerVM.Email,
-                CreatedAt = DateTime.Now
-            };
-
-            var result = await _userManager.CreateAsync(user, registerVM.Password);
 
             if (result.Succeeded)
             {
-                if (!string.IsNullOrEmpty(registerVM.Role))
+                var user = await userManager.FindByEmailAsync(loginVM.Email);
+                if (await userManager.IsInRoleAsync(user, SD.Role_Admin))
                 {
-                    await _userManager.AddToRoleAsync(user, registerVM.Role);
-                }
-                else
-                {
-                    await _userManager.AddToRoleAsync(user, SD.Role_Customer);
+                    return RedirectToAction("Index", "Dashboard");
                 }
 
-                await _signInManager.SignInAsync(user, isPersistent: false);
-                if (string.IsNullOrEmpty(registerVM.RedirectUrl))
+                if (string.IsNullOrEmpty(loginVM.RedirectUrl))
                 {
                     return RedirectToAction("Index", "Home");
                 }
                 else
                 {
-                    return LocalRedirect(registerVM.RedirectUrl);
+                    return LocalRedirect(loginVM.RedirectUrl);
                 }
             }
-
-            foreach (var error in result.Errors)
+            else
             {
-                ModelState.AddModelError("", error.Description);
+                ModelState.AddModelError("", "Invalid login attempt.");
             }
+        }
 
-            registerVM.RoleList = _roleManager.Roles.Select(x => new SelectListItem
+        return View(loginVM);
+    }
+
+    public IActionResult Register(string returnUrl = null)
+    {
+        returnUrl ??= Url.Content("~/");
+        if (!roleManager.RoleExistsAsync(SD.Role_Admin).GetAwaiter().GetResult())
+        {
+            roleManager.CreateAsync(new IdentityRole(SD.Role_Admin)).Wait();
+            roleManager.CreateAsync(new IdentityRole(SD.Role_Customer)).Wait();
+        }
+
+        RegisterVM registerVM = new()
+        {
+            RoleList = roleManager.Roles.Select(x => new SelectListItem
             {
                 Text = x.Name,
                 Value = x.Name
-            });
+            }),
+            RedirectUrl = returnUrl
+        };
 
-            return View(registerVM);
-        }
-
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
-        }
-
-        public IActionResult AccessDenied()
-        {
-            return View();
-        }
-
-
+        return View(registerVM);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Register(RegisterVM registerVM)
+    {
+        ApplicationUser user = new()
+        {
+            Name = registerVM.Name,
+            Email = registerVM.Email,
+            PhoneNumber = registerVM.PhoneNumber,
+            NormalizedEmail = registerVM.Email.ToUpper(),
+            EmailConfirmed = true,
+            UserName = registerVM.Email,
+            CreatedAt = DateTime.Now
+        };
+
+        var result = await userManager.CreateAsync(user, registerVM.Password);
+
+        if (result.Succeeded)
+        {
+            if (!string.IsNullOrEmpty(registerVM.Role))
+            {
+                await userManager.AddToRoleAsync(user, registerVM.Role);
+            }
+            else
+            {
+                await userManager.AddToRoleAsync(user, SD.Role_Customer);
+            }
+
+            await signInManager.SignInAsync(user, isPersistent: false);
+            if (string.IsNullOrEmpty(registerVM.RedirectUrl))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return LocalRedirect(registerVM.RedirectUrl);
+            }
+        }
+
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError("", error.Description);
+        }
+
+        registerVM.RoleList = roleManager.Roles.Select(x => new SelectListItem
+        {
+            Text = x.Name,
+            Value = x.Name
+        });
+
+        return View(registerVM);
+    }
+
+    public async Task<IActionResult> Logout()
+    {
+        await signInManager.SignOutAsync();
+        return RedirectToAction("Index", "Home");
+    }
+
+    public IActionResult AccessDenied()
+    {
+        return View();
+    }
+
+
 }
