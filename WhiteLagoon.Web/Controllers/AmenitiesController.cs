@@ -100,6 +100,7 @@ public class AmenitiesController : Controller
 
         if (ModelState.IsValid)
         {
+            Amenity amenity = _unitOfWork.AmenityRepository.Get(u => u.Id == amenityVM.Amenity.Id);
             _unitOfWork.AmenityRepository.Update(amenityVM.Amenity);
             _unitOfWork.Save();
 

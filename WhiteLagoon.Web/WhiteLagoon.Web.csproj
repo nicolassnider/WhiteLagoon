@@ -7,28 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\js\dashboard\ViewModels\AmenityVM.cs" />
-    <Content Remove="wwwroot\js\dashboard\ViewModels\HomeVM.cs" />
-    <Content Remove="wwwroot\js\dashboard\ViewModels\LineChartVM.cs" />
-    <Content Remove="wwwroot\js\dashboard\ViewModels\LoginVM.cs" />
-    <Content Remove="wwwroot\js\dashboard\ViewModels\PieChartVM.cs" />
-    <Content Remove="wwwroot\js\dashboard\ViewModels\RadialBarChartVM.cs" />
-    <Content Remove="wwwroot\js\dashboard\ViewModels\RegisterVM.cs" />
-    <Content Remove="wwwroot\js\dashboard\ViewModels\VillaNumberVM.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="wwwroot\js\dashboard\ViewModels\AmenityVM.cs" />
-    <Compile Include="wwwroot\js\dashboard\ViewModels\HomeVM.cs" />
-    <Compile Include="wwwroot\js\dashboard\ViewModels\LineChartVM.cs" />
-    <Compile Include="wwwroot\js\dashboard\ViewModels\LoginVM.cs" />
-    <Compile Include="wwwroot\js\dashboard\ViewModels\PieChartVM.cs" />
-    <Compile Include="wwwroot\js\dashboard\ViewModels\RadialBarChartVM.cs" />
-    <Compile Include="wwwroot\js\dashboard\ViewModels\RegisterVM.cs" />
-    <Compile Include="wwwroot\js\dashboard\ViewModels\VillaNumberVM.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebPages" Version="3.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.24">
       <PrivateAssets>all</PrivateAssets>
@@ -44,6 +22,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WhiteLagoon.Infrastructure\WhiteLagoon.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\js\dashboard\ViewModels\" />
   </ItemGroup>
 
 </Project>
