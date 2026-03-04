@@ -101,7 +101,16 @@ public class AmenitiesController : Controller
         if (ModelState.IsValid)
         {
             Amenity amenity = _unitOfWork.AmenityRepository.Get(u => u.Id == amenityVM.Amenity.Id);
-            _unitOfWork.AmenityRepository.Update(amenityVM.Amenity);
+            if (amenity.Name.ToLower().Contains("special"))
+            {
+                // other update scenarios
+                amenityVM.Amenity.Description = amenity.Description;
+            }
+            else
+            {
+                _unitOfWork.AmenityRepository.Update(amenityVM.Amenity);
+            }
+
             _unitOfWork.Save();
 
             TempData["success"] = "Amenity updated successfully.";
