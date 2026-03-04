@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="~/WhiteLagoon.Web.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/spinner.css"/>
     <link rel="stylesheet" href="cdn.datatables.net/2.3.7/css/dataTables.dataTables.min.css" />
+    
+
 
     
 
@@ -91,7 +93,7 @@
 
     @* render the partial that contains toastr.options + TempData -> toastr.* calls *@
     <partial name="_Notification" />
-
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
